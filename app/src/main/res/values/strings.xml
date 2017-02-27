@@ -1,9 +1,11 @@
 <resources>
-    <string name="app_name">QuickSettingForSS</string>
+    <string name="app_name">QuickTurnOff</string>
     <string name="tile_label">ALL</string>
     <string name="service_active">ON</string>
     <string name="service_inactive">OFF</string>
     <string name="stopping">shutting wifi and ss</string>
     <string name="starting">starting wifi and ss</string>
+    <string name="cancel">cancel</string>
+    <string name="fire">yes</string>
 
 </resources>
