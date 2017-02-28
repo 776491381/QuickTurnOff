@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -20,15 +21,26 @@ public class MainActivity extends AppCompatActivity {
 
     private Switch mySwitch;
     private TextView switchStatus;
+    private Switch wifiListen;
+    private static final String TAG = "network test:    ";
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        startService(new Intent(this, QuickSettingsService.class));
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mySwitch = (Switch) findViewById(R.id.mySwitch);
+        wifiListen = (Switch) findViewById(R.id.wifiListen);
         switchStatus = (TextView) findViewById(R.id.switchStatus);
         final WifiManager wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
 
         mySwitch.setChecked(wifi.isWifiEnabled());
+        wifiListen.setChecked(QuickSettingsService.service.wifiListenpos);
 
 
         mySwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -37,14 +49,15 @@ public class MainActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView,
                                          boolean isChecked) {
 
-                if(checkInstall()){
-                if(isChecked){
+                if (checkInstall()) {
+                    if (isChecked) {
                         switchStatus.setText("Switch is currently ON");
                         wifi.setWifiEnabled(true);
-                }else{
+                    } else {
                         switchStatus.setText("Switch is currently OFF");
                         wifi.setWifiEnabled(false);
-                    }}else{
+                    }
+                } else {
 
                     alert();
                 }
@@ -52,25 +65,43 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //check the current state before we display the screen
-        if(mySwitch.isChecked()&&checkInstall()){
+        if (mySwitch.isChecked() && checkInstall()) {
             switchStatus.setText("Switch is currently ON");
-        }
-        else {
+        } else {
             switchStatus.setText("Switch is currently OFF");
         }
 
+        wifiListen.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (checkInstall()) {
+                    if (isChecked) {
+                        QuickSettingsService.service.wifiListenpos = true;
+                        onResume();
+                    } else {
+                        QuickSettingsService.service.wifiListenpos = false;
+                        onResume();
+                    }
+                } else {
+
+                    alert();
+                }
+            }
+        });
 
     }
 
 
-    public boolean checkInstall(){
+
+    public boolean checkInstall() {
 
         final PackageManager pm = getPackageManager();
         List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
 
         for (ApplicationInfo packageInfo : packages) {
-            if(packageInfo.packageName.equals("com.github.shadowsocks")){
+            if (packageInfo.packageName.equals("com.github.shadowsocks")) {
                 return true;
             }
         }
@@ -78,21 +109,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-
-    public void alert(){
+    public void alert() {
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        builder.setMessage("don't have Shadowsocks"+"\n"+"Press yes to install")
+        builder.setMessage("don't have Shadowsocks" + "\n" + "Press yes to install")
                 .setPositiveButton(R.string.fire, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         Uri uri = Uri.parse("https://play.google.com/store/apps/details?id=com.github.shadowsocks");
                         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                         startActivity(intent);
-                        }
+                    }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                    finishAndRemoveTask();
+                        finishAndRemoveTask();
 
                     }
 

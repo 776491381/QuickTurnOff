@@ -1,12 +1,8 @@
 package com.example.fyy.quickturnoff;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
@@ -17,13 +13,11 @@ import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
-import android.os.IBinder;
+import android.os.CountDownTimer;
 import android.os.Parcelable;
 import android.service.quicksettings.Tile;
 import android.service.quicksettings.TileService;
-import android.support.annotation.Nullable;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.util.List;
 import java.util.Locale;
@@ -33,11 +27,11 @@ import java.util.Locale;
  */
 public class QuickSettingsService extends TileService {
 
-    private boolean isInstall = false;
     private boolean isActive;
     public static QuickSettingsService service;
     private static final String TAG = "network test:    ";
     private static final String SERVICE_STATUS_FLAG = "serviceStatus";
+    public static boolean wifiListenpos=true;
 
     @Override
     public void onCreate() {
@@ -116,15 +110,14 @@ public class QuickSettingsService extends TileService {
 
 
     private boolean updateTile(boolean doWifi) throws InterruptedException {
-//        Thread time = new Thread();
 
-        Tile tile = this.getQsTile();
+        final Tile tile = this.getQsTile();
         isActive = getServiceStatus("com.google.android_quick_settings");
         WifiManager wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
 
-        Icon newIcon;
-        String newLabel;
-        int newState;
+        final Icon newIcon;
+        final String newLabel;
+        final int newState;
 
         if (isActive) {
 
@@ -167,11 +160,28 @@ public class QuickSettingsService extends TileService {
             }
         }
 
-//        time.sleep(2000);
-        tile.setLabel(newLabel);
-        tile.setIcon(newIcon);
-        tile.setState(newState);
-        tile.updateTile();
+        new CountDownTimer(1500,1000){
+
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+                tile.setIcon(Icon.createWithResource(getApplicationContext(),
+                        R.drawable.ic_waiting));
+                tile.setLabel("waiting...");
+                tile.setState(Tile.STATE_UNAVAILABLE);
+                tile.updateTile();
+            }
+
+            @Override
+            public void onFinish() {
+                tile.setLabel(newLabel);
+                tile.setIcon(newIcon);
+                tile.setState(newState);
+                tile.updateTile();
+            }
+        }.start();
+
+
 
         return isActive;
     }
@@ -193,17 +203,12 @@ public class QuickSettingsService extends TileService {
 
 
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        //NetworkInfo ni = cm.getActiveNetworkInfo();
         Network[] networks = cm.getAllNetworks();
 
-//        Log.i(TAG, "Network count: " + networks.length);
         for(int i = 0; i < networks.length; i++) {
 
             NetworkCapabilities caps = cm.getNetworkCapabilities(networks[i]);
 
-//            Log.i(TAG, "Network " + i + ": " + networks[i].toString());
-//            Log.i(TAG, "VPN transport is: " + caps.hasTransport(NetworkCapabilities.TRANSPORT_VPN));
-//            Log.i(TAG, "NOT_VPN capability is: " + caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_VPN));
 
             if(caps.hasTransport(NetworkCapabilities.TRANSPORT_VPN)==true){
                 return true;
@@ -234,9 +239,7 @@ public class QuickSettingsService extends TileService {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-
-//            System.out.println("----");
-            if (WifiManager.NETWORK_STATE_CHANGED_ACTION.equals(intent.getAction())) {
+            if (WifiManager.NETWORK_STATE_CHANGED_ACTION.equals(intent.getAction())&&wifiListenpos) {
                 Parcelable parcelableExtra = intent
                         .getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
                 if (null != parcelableExtra) {

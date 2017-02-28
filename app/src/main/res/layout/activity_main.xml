@@ -10,22 +10,41 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.fyy.quickturnoff.MainActivity">
 
-
     <Switch
-        android:text="Switch"
+        android:text="wifiListen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="193dp"
-        android:id="@+id/mySwitch" />
+        android:layout_marginTop="130dp"
+        android:id="@+id/wifiListen" />
+    <Switch
+
+
+
+    android:text="wifiSwitch"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentTop="true"
+    android:layout_centerHorizontal="true"
+    android:layout_marginTop="220dp"
+    android:id="@+id/mySwitch" />
+
+    <TextView
+        android:text="change status with wifi changed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="22dp"
+        android:id="@+id/WifitextView"
+        android:layout_below="@+id/wifiListen"
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:text="TextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/mySwitch"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="67dp"
-        android:id="@+id/switchStatus" />
+        android:layout_marginTop="32dp"
+        android:id="@+id/switchStatus"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>
