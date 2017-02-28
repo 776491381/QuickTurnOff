@@ -4,18 +4,14 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,34 +23,32 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        startService(new Intent(this, QuickSettingsService.class));
+        startService(new Intent(MainActivity.this, QuickSettingsService.class));
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        startService(new Intent(MainActivity.this, QuickSettingsService.class));
         setContentView(R.layout.activity_main);
         mySwitch = (Switch) findViewById(R.id.mySwitch);
         wifiListen = (Switch) findViewById(R.id.wifiListen);
         switchStatus = (TextView) findViewById(R.id.switchStatus);
         final WifiManager wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-
         mySwitch.setChecked(wifi.isWifiEnabled());
         wifiListen.setChecked(QuickSettingsService.service.wifiListenpos);
-
-
         mySwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
             @Override
             public void onCheckedChanged(CompoundButton buttonView,
                                          boolean isChecked) {
 
-                if (checkInstall()) {
+                if (Utils.checkInstall(getPackageManager())) {
                     if (isChecked) {
-                        switchStatus.setText("Switch is currently ON");
+                        switchStatus.setText("Wifi is currently ON");
                         wifi.setWifiEnabled(true);
                     } else {
-                        switchStatus.setText("Switch is currently OFF");
+                        switchStatus.setText("Wifi is currently OFF");
                         wifi.setWifiEnabled(false);
                     }
                 } else {
@@ -65,23 +59,24 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        if (mySwitch.isChecked() && checkInstall()) {
-            switchStatus.setText("Switch is currently ON");
+        if (mySwitch.isChecked() && Utils.checkInstall(getPackageManager())) {
+            switchStatus.setText("Wifi is currently ON");
         } else {
-            switchStatus.setText("Switch is currently OFF");
+            switchStatus.setText("Wifi is currently OFF");
         }
-
         wifiListen.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
 
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (checkInstall()) {
+                if (Utils.checkInstall(getPackageManager())) {
                     if (isChecked) {
                         QuickSettingsService.service.wifiListenpos = true;
+                        Utils.showSnack("Wifi Listen start success", findViewById(R.id.activity_main));
                         onResume();
                     } else {
                         QuickSettingsService.service.wifiListenpos = false;
+                        Utils.showSnack("Wifi Listen close success", findViewById(R.id.activity_main));
                         onResume();
                     }
                 } else {
@@ -91,21 +86,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-    }
-
-
-
-    public boolean checkInstall() {
-
-        final PackageManager pm = getPackageManager();
-        List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
-
-        for (ApplicationInfo packageInfo : packages) {
-            if (packageInfo.packageName.equals("com.github.shadowsocks")) {
-                return true;
-            }
-        }
-        return false;
     }
 
 
@@ -126,7 +106,6 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                 });
-        // Create the AlertDialog object and return it
         final AlertDialog Alert = builder.create();
         Alert.show();
     }

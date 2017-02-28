@@ -1,8 +1,12 @@
 package com.example.fyy.quickturnoff;
 
+import android.app.ActivityManager;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
@@ -12,12 +16,13 @@ import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.CountDownTimer;
 import android.os.Parcelable;
 import android.service.quicksettings.Tile;
 import android.service.quicksettings.TileService;
-import android.util.Log;
+import android.widget.Toast;
 
 import java.util.List;
 import java.util.Locale;
@@ -27,47 +32,38 @@ import java.util.Locale;
  */
 public class QuickSettingsService extends TileService {
 
-    private boolean isActive;
+    private static boolean isActive;
     public static QuickSettingsService service;
-    private static final String TAG = "network test:    ";
     private static final String SERVICE_STATUS_FLAG = "serviceStatus";
-    public static boolean wifiListenpos=true;
+    public static boolean wifiListenpos = true;
 
     @Override
     public void onCreate() {
 
         super.onCreate();
         service = this;
-
-        if(checkInstall() == false){
-
-            this.stopSelf();
-        }
     }
+
 
     @Override
     public void onClick() {
-        if(checkInstall() == false){
-
+        if (checkInstall() == false) {
+            showDialog(alert());
             this.stopSelf();
             return;
         }
         service = this;
-        try {
-            updateTile(true);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        updateTile(true);
     }
 
 
-    public boolean checkInstall(){
+    public boolean checkInstall() {
 
         final PackageManager pm = getPackageManager();
         List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
 
         for (ApplicationInfo packageInfo : packages) {
-            if(packageInfo.packageName.equals("com.github.shadowsocks")){
+            if (packageInfo.packageName.equals("com.github.shadowsocks")) {
                 return true;
             }
         }
@@ -75,7 +71,26 @@ public class QuickSettingsService extends TileService {
     }
 
 
-    public void changSS(){
+    public Dialog alert() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(QuickSettingsService.this);
+        builder.setMessage("don't have Shadowsocks" + "\n" + "Press yes to install")
+                .setPositiveButton(R.string.fire, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Uri uri = Uri.parse("https://play.google.com/store/apps/details?id=com.github.shadowsocks");
+                        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                        startActivity(intent);
+                    }
+                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+
+            }
+
+        });
+        final AlertDialog Alert = builder.create();
+        return Alert;
+    }
+
+    public void changSS() {
 
         Intent i = new Intent();
 
@@ -89,27 +104,27 @@ public class QuickSettingsService extends TileService {
     }
 
 
-    public void turnOff(boolean doWifi) throws InterruptedException {
+    public void turnOff(boolean doWifi) {
 
         boolean tileStatus = getTileStatus();
-        if(tileStatus){
+        if (tileStatus) {
             updateTile(doWifi);
         }
 
     }
 
-    public void turnOn(boolean doWifi) throws InterruptedException {
+    public void turnOn(boolean doWifi) {
 
         boolean tileStatus = getTileStatus();
-        Log.i("TurnOn", tileStatus + " " + doWifi);
-        if(!tileStatus){
+//        Log.i("TurnOn", tileStatus + " " + doWifi);
+        if (!tileStatus) {
             updateTile(doWifi);
         }
 
     }
 
 
-    private boolean updateTile(boolean doWifi) throws InterruptedException {
+    private boolean updateTile(boolean doWifi) {
 
         final Tile tile = this.getQsTile();
         isActive = getServiceStatus("com.google.android_quick_settings");
@@ -135,7 +150,7 @@ public class QuickSettingsService extends TileService {
                 wifi.setWifiEnabled(true);
             }
 
-            if(!getVPNStatus()){
+            if (!getVPNStatus()) {
                 changSS();
             }
 
@@ -155,12 +170,12 @@ public class QuickSettingsService extends TileService {
                 wifi.setWifiEnabled(false);
             }
 
-            if(getVPNStatus()){
+            if (getVPNStatus()) {
                 changSS();
             }
         }
 
-        new CountDownTimer(1500,1000){
+        new CountDownTimer(1500, 1000) {
 
             @Override
             public void onTick(long millisUntilFinished) {
@@ -182,9 +197,9 @@ public class QuickSettingsService extends TileService {
         }.start();
 
 
-
         return isActive;
     }
+
     private boolean getServiceStatus(String PREFERENCES_KEY) {
 
         SharedPreferences prefs =
@@ -199,18 +214,18 @@ public class QuickSettingsService extends TileService {
         return isActive;
     }
 
-    public boolean getVPNStatus()  {
+    public boolean getVPNStatus() {
 
 
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         Network[] networks = cm.getAllNetworks();
 
-        for(int i = 0; i < networks.length; i++) {
+        for (int i = 0; i < networks.length; i++) {
 
             NetworkCapabilities caps = cm.getNetworkCapabilities(networks[i]);
 
 
-            if(caps.hasTransport(NetworkCapabilities.TRANSPORT_VPN)==true){
+            if (caps.hasTransport(NetworkCapabilities.TRANSPORT_VPN) == true) {
                 return true;
             }
         }
@@ -219,61 +234,55 @@ public class QuickSettingsService extends TileService {
     }
 
 
-    public boolean getTileStatus(){
+    public boolean getTileStatus() {
 
-        Tile tile =getQsTile();
-        if(tile.getState()==Tile.STATE_ACTIVE){
-            return true;
-        }else {
-            return false;
-        }
-
+        Tile tile = getQsTile();
+            if (tile.getState() == Tile.STATE_ACTIVE) {
+                return true;
+            } else {
+                return false;
+            }
     }
 
 
+    public  class WifiReceiver extends BroadcastReceiver {
 
-    public static class WifiReceiver extends BroadcastReceiver{
-
-        static NetworkInfo.State wifiState = NetworkInfo.State.UNKNOWN;
+         NetworkInfo.State wifiState = NetworkInfo.State.UNKNOWN;
 
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (WifiManager.NETWORK_STATE_CHANGED_ACTION.equals(intent.getAction())&&wifiListenpos) {
+            ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+
+            if(!Utils.isMyServiceRunning(manager,QuickSettingsService.class)){
+                startService(new Intent(QuickSettingsService.this, QuickSettingsService.class));
+            }
+            if (WifiManager.NETWORK_STATE_CHANGED_ACTION.equals(intent.getAction()) && wifiListenpos) {
                 Parcelable parcelableExtra = intent
                         .getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
                 if (null != parcelableExtra) {
 
                     NetworkInfo networkInfo = (NetworkInfo) parcelableExtra;
                     NetworkInfo.State state = networkInfo.getState();
-                    boolean isConnected = state == NetworkInfo.State.CONNECTED;// 当然，这边可以更精确的确定状态
+                    boolean isConnected = state == NetworkInfo.State.CONNECTED;
 //                    Log.i("Wifi", wifiState.toString());
                     if (state == NetworkInfo.State.CONNECTING) return;
                     if (wifiState == NetworkInfo.State.UNKNOWN) wifiState = state;
                     if (wifiState == state) return;
                     wifiState = state;
-//                    Log.e("H3c", "isConnected " + isConnected);
                     if (isConnected) {
-                        try {
-                            QuickSettingsService.service.turnOn(false);
-                            System.out.println("True " + QuickSettingsService.service);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                        QuickSettingsService.service.turnOn(false);
+                        Toast.makeText(context, "VPN has established", Toast.LENGTH_LONG).show();
+//                            System.out.println("True " + QuickSettingsService.service);
                     } else {
-                        try {
-                            QuickSettingsService.service.turnOff(false);
-                            System.out.println("False " + QuickSettingsService.service);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
+                        QuickSettingsService.service.turnOff(false);
+                        Toast.makeText(context, "VPN has unestablished", Toast.LENGTH_LONG).show();
+//                            System.out.println("False " + QuickSettingsService.service);
                     }
                 }
             }
         }
-
-
+    }
 
 
 }
