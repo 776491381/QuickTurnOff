@@ -237,24 +237,27 @@ public class QuickSettingsService extends TileService {
     public boolean getTileStatus() {
 
         Tile tile = getQsTile();
-            if (tile.getState() == Tile.STATE_ACTIVE) {
-                return true;
-            } else {
-                return false;
-            }
+        if (tile.getState() == Tile.STATE_ACTIVE) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 
-    public  class WifiReceiver extends BroadcastReceiver {
+    public class WifiReceiver extends BroadcastReceiver {
 
-         NetworkInfo.State wifiState = NetworkInfo.State.UNKNOWN;
+        NetworkInfo.State wifiState = NetworkInfo.State.UNKNOWN;
 
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
 
-            if(!Utils.isMyServiceRunning(manager,QuickSettingsService.class)){
+            if (QuickSettingsService.service == null) {
+                context.startService(new Intent(context, QuickSettingsService.class));
+            }
+            ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+            if (!Utils.isMyServiceRunning(manager, QuickSettingsService.class)) {
                 startService(new Intent(QuickSettingsService.this, QuickSettingsService.class));
             }
             if (WifiManager.NETWORK_STATE_CHANGED_ACTION.equals(intent.getAction()) && wifiListenpos) {
@@ -265,7 +268,6 @@ public class QuickSettingsService extends TileService {
                     NetworkInfo networkInfo = (NetworkInfo) parcelableExtra;
                     NetworkInfo.State state = networkInfo.getState();
                     boolean isConnected = state == NetworkInfo.State.CONNECTED;
-//                    Log.i("Wifi", wifiState.toString());
                     if (state == NetworkInfo.State.CONNECTING) return;
                     if (wifiState == NetworkInfo.State.UNKNOWN) wifiState = state;
                     if (wifiState == state) return;
@@ -273,11 +275,9 @@ public class QuickSettingsService extends TileService {
                     if (isConnected) {
                         QuickSettingsService.service.turnOn(false);
                         Toast.makeText(context, "VPN has established", Toast.LENGTH_LONG).show();
-//                            System.out.println("True " + QuickSettingsService.service);
                     } else {
                         QuickSettingsService.service.turnOff(false);
                         Toast.makeText(context, "VPN has unestablished", Toast.LENGTH_LONG).show();
-//                            System.out.println("False " + QuickSettingsService.service);
                     }
                 }
             }

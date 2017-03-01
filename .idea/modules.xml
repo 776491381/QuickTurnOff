@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/QuickTurnOff.iml" filepath="$PROJECT_DIR$/QuickTurnOff.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/mobile/mobile.iml" filepath="$PROJECT_DIR$/mobile/mobile.iml" />
+      <module fileurl="file://$PROJECT_DIR$/mobilebac/mobilebac.iml" filepath="$PROJECT_DIR$/mobilebac/mobilebac.iml" />
     </modules>
   </component>
 </project>

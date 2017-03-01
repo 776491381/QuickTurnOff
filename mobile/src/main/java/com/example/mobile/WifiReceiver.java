@@ -7,6 +7,7 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.Parcelable;
 import android.service.quicksettings.Tile;
+import android.support.v4.content.WakefulBroadcastReceiver;
 import android.widget.Toast;
 
 /**
@@ -17,8 +18,14 @@ public  class WifiReceiver extends BroadcastReceiver {
 
     static NetworkInfo.State wifiState = NetworkInfo.State.UNKNOWN;
 
+
+
     @Override
     public void onReceive(Context context, Intent intent) {
+
+        if(WLANwithShadowsocks.service==null) {
+            context.startService(new Intent(context, WLANwithShadowsocks.class));
+        }
         Tile tile = WLANwithShadowsocks.service.getQsTile();
         if (WifiManager.NETWORK_STATE_CHANGED_ACTION.equals(intent.getAction()) && (tile.getState()==tile.STATE_ACTIVE) ){
             Parcelable parcelableExtra = intent
@@ -33,6 +40,7 @@ public  class WifiReceiver extends BroadcastReceiver {
                 if (wifiState == state) return;
                 wifiState = state;
                 if (isConnected) {
+
                     WLANwithShadowsocks.service.turnOn();
                     Toast.makeText(context, "VPN has established", Toast.LENGTH_LONG).show();
                 } else {

@@ -18,7 +18,6 @@ import java.util.Locale;
 
 public class QuickSettingsService extends WLANwithShadowsocks {
 
-    private static final String SERVICE_STATUS_FLAG = "serviceStatus";
     private static boolean QisActive;
 
 

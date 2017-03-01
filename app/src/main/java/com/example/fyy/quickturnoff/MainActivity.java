@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        startService(new Intent(MainActivity.this, QuickSettingsService.class));
+        this.startService(new Intent(MainActivity.this, QuickSettingsService.class));
         setContentView(R.layout.activity_main);
         mySwitch = (Switch) findViewById(R.id.mySwitch);
         wifiListen = (Switch) findViewById(R.id.wifiListen);

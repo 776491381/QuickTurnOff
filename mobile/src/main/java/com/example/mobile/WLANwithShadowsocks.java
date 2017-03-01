@@ -2,7 +2,6 @@ package com.example.mobile;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -14,14 +13,10 @@ import android.graphics.drawable.Icon;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
-import android.net.NetworkInfo;
 import android.net.Uri;
-import android.net.wifi.WifiManager;
 import android.os.CountDownTimer;
-import android.os.Parcelable;
 import android.service.quicksettings.Tile;
 import android.service.quicksettings.TileService;
-import android.widget.Toast;
 
 import java.util.List;
 import java.util.Locale;
@@ -37,6 +32,8 @@ public class WLANwithShadowsocks extends TileService {
     public static WLANwithShadowsocks service;
 
     public WLANwithShadowsocks() {
+
+        service = this;
 
     }
 
@@ -111,7 +108,6 @@ public class WLANwithShadowsocks extends TileService {
     }
 
     public boolean getVPNStatus() {
-
 
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         Network[] networks = cm.getAllNetworks();
