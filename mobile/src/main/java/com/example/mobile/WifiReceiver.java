@@ -20,58 +20,42 @@ public class WifiReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(final Context context, final Intent intent) {
-        if (null == WLANwithShadowsocks.service) {
-            new CountDownTimer(2000,1000){
+
+            context.startService(new Intent(context, WLANwithShadowsocks.class));
+
+            new CountDownTimer(2500, 1000) {
 
                 @Override
                 public void onTick(long millisUntilFinished) {
-                    context.startService(new Intent(context, WLANwithShadowsocks.class));
-
                 }
 
                 @Override
                 public void onFinish() {
+                    if (WifiManager.NETWORK_STATE_CHANGED_ACTION.equals(intent.getAction()) && WLANwithShadowsocks.TileFinalStatus) {
+                        Parcelable parcelableExtra = intent
+                                .getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
+                        if (null != parcelableExtra) {
 
-                }
-            };
-            return;
-        }
-        new CountDownTimer(2000,1000){
+                            NetworkInfo networkInfo = (NetworkInfo) parcelableExtra;
+                            NetworkInfo.State state = networkInfo.getState();
+                            boolean isConnected = state == NetworkInfo.State.CONNECTED;
+                            if (state == NetworkInfo.State.CONNECTING) return;
+                            if (wifiState == NetworkInfo.State.UNKNOWN) wifiState = state;
+                            if (wifiState == state) return;
+                            wifiState = state;
+                            if (isConnected) {
 
-            @Override
-            public void onTick(long millisUntilFinished) {
-
-                if (WifiManager.NETWORK_STATE_CHANGED_ACTION.equals(intent.getAction()) && WLANwithShadowsocks.TileFinalStatus) {
-                    Parcelable parcelableExtra = intent
-                            .getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
-                    if (null != parcelableExtra) {
-
-                        NetworkInfo networkInfo = (NetworkInfo) parcelableExtra;
-                        NetworkInfo.State state = networkInfo.getState();
-                        boolean isConnected = state == NetworkInfo.State.CONNECTED;
-                        if (state == NetworkInfo.State.CONNECTING) return;
-                        if (wifiState == NetworkInfo.State.UNKNOWN) wifiState = state;
-                        if (wifiState == state) return;
-                        wifiState = state;
-                        if (isConnected) {
-
-                            WLANwithShadowsocks.service.turnOn();
-                            Toast.makeText(context, "VPN has established", Toast.LENGTH_LONG).show();
-                        } else {
-                            WLANwithShadowsocks.service.turnOff();
-                            Toast.makeText(context, "VPN has unestablished", Toast.LENGTH_LONG).show();
+                                WLANwithShadowsocks.service.turnOn();
+                                Toast.makeText(context, "VPN has established", Toast.LENGTH_LONG).show();
+                            } else {
+                                WLANwithShadowsocks.service.turnOff();
+                                Toast.makeText(context, "VPN has unestablished", Toast.LENGTH_LONG).show();
+                            }
                         }
                     }
                 }
-            }
-
-            @Override
-            public void onFinish() {
-
-            }
-        };
+            }.start();
 
 
+        }
     }
-}
-
