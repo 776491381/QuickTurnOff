@@ -1,7 +1,6 @@
 package com.example.mobile;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.drawable.Icon;
 import android.net.ConnectivityManager;
 import android.net.Network;

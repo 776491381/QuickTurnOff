@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">QuickTurnOff</string>
+    <string name="app_name">QuickSwitch</string>
     <string name="tile_label">WifiTrack</string>
     <string name="tile_label2">ALL</string>
     <string name="service_active">ON</string>

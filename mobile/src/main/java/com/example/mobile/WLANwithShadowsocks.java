@@ -17,6 +17,7 @@ import android.net.Uri;
 import android.os.CountDownTimer;
 import android.service.quicksettings.Tile;
 import android.service.quicksettings.TileService;
+import android.util.Log;
 
 import java.util.List;
 import java.util.Locale;
@@ -30,13 +31,24 @@ public class WLANwithShadowsocks extends TileService {
     public static boolean isActive;
     private static final String SERVICE_STATUS_FLAG = "serviceStatus";
     public static WLANwithShadowsocks service;
+    public static boolean TileFinalStatus = true ;
 
     public WLANwithShadowsocks() {
-
         service = this;
-
     }
 
+
+    @Override
+    public void onStartListening() {
+        super.onStartListening();
+//        Log.d("Tile", "Start <------");
+    }
+
+    @Override
+    public void onStopListening() {
+        super.onStopListening();
+//        Log.d("Tile", "Stop ------>");
+    }
 
     @Override
     public void onCreate() {
@@ -87,7 +99,8 @@ public class WLANwithShadowsocks extends TileService {
             return;
         }
         service = this;
-        updateTile();
+        TileFinalStatus = updateTile();
+        Log.d("TileFinalStatus", String.valueOf(TileFinalStatus));
     }
 
     public void turnOff() {
@@ -138,6 +151,12 @@ public class WLANwithShadowsocks extends TileService {
         prefs.edit().putBoolean(SERVICE_STATUS_FLAG, isActive).apply();
 
         return isActive;
+    }
+
+    @Override
+    public void onDestroy() {
+        service = null;
+        super.onDestroy();
     }
 
     public boolean updateTile() {
