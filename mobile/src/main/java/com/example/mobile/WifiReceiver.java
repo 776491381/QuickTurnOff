@@ -11,7 +11,6 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.CountDownTimer;
 import android.os.Parcelable;
-import android.util.Log;
 import android.widget.Toast;
 
 /**
@@ -21,7 +20,7 @@ public class WifiReceiver extends BroadcastReceiver {
 
 
     static NetworkInfo.State wifiState = NetworkInfo.State.UNKNOWN;
-    private boolean ReceiveStatus;
+    public static boolean ReceiveStatus = true;
 
 
     @Override
@@ -32,7 +31,6 @@ public class WifiReceiver extends BroadcastReceiver {
 
                 @Override
                 public void onTick(long millisUntilFinished) {
-                        ReceiveStatus = WLANwithShadowsocks.service.TileFinalStatus;
                 }
 
                 @Override
@@ -52,10 +50,10 @@ public class WifiReceiver extends BroadcastReceiver {
                             if (isConnected) {
 
                                 turnOn(context);
-                                Toast.makeText(context, "VPN has established", Toast.LENGTH_LONG).show();
+                                Toast.makeText(context, R.string.VPNES, Toast.LENGTH_LONG).show();
                             } else {
                                 turnOff(context);
-                                Toast.makeText(context, "VPN has unestablished", Toast.LENGTH_LONG).show();
+                                Toast.makeText(context, R.string.VPNUES, Toast.LENGTH_LONG).show();
                             }
                         }
                     }

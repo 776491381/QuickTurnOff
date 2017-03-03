@@ -8,5 +8,19 @@
     <string name="starting">starting wifi and ss</string>
     <string name="cancel">cancel</string>
     <string name="fire">yes</string>
+    <string name="wait">waitting...</string>
+
+    <string name="about">About</string>
+    <string name="version">Version :  1.0</string>
+    <string name="author">Author :  FYY</string>
+    <string name="useway">How to use it</string>
+    <string name="title_activity_howtouse">howtouse</string>
+  <string name="use">
+        "\n\<n></n>1. Open QuickSetting to add a new Tile\n"
+        "\<n></n>2. Click the added QuickSettingTile named WiFiTrack to switch it on\n"
+        "\<n></n>3. Then shadowsocks will switch status with WiFi status\n"
+        "\<n></n>4. Another tile named ALL Tile is to switch both WiFi and Shadowsocks ignored WiFiTrack\n"
+    </string>
+
 
 </resources>

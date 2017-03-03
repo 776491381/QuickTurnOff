@@ -2,17 +2,12 @@ package com.example.mobile;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Icon;
-import android.net.ConnectivityManager;
-import android.net.Network;
-import android.net.NetworkCapabilities;
 import android.net.Uri;
 import android.os.CountDownTimer;
 import android.service.quicksettings.Tile;
@@ -30,11 +25,9 @@ public class WLANwithShadowsocks extends TileService {
 
     public static boolean isActive;
     private static final String SERVICE_STATUS_FLAG = "serviceStatus";
-    public static WLANwithShadowsocks service;
     public static boolean TileFinalStatus = true ;
 
     public WLANwithShadowsocks() {
-        service = this;
     }
 
 
@@ -53,7 +46,6 @@ public class WLANwithShadowsocks extends TileService {
     @Override
     public void onCreate() {
         super.onCreate();
-        service = this;
     }
 
 
@@ -73,7 +65,7 @@ public class WLANwithShadowsocks extends TileService {
 
     public Dialog alert() {
         AlertDialog.Builder builder = new AlertDialog.Builder(WLANwithShadowsocks.this);
-        builder.setMessage("don't have Shadowsocks" + "\n" + "Press yes to install")
+        builder.setMessage(R.string.alert1 + "\n" + R.string.alert2)
                 .setPositiveButton(R.string.fire, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         Uri uri = Uri.parse("https://play.google.com/store/apps/details?id=com.github.shadowsocks");
@@ -98,7 +90,6 @@ public class WLANwithShadowsocks extends TileService {
             this.stopSelf();
             return;
         }
-        service = this;
         TileFinalStatus = updateTile();
         Log.d("TileFinalStatus", String.valueOf(TileFinalStatus));
     }
@@ -121,7 +112,6 @@ public class WLANwithShadowsocks extends TileService {
 
     @Override
     public void onDestroy() {
-        service = null;
         super.onDestroy();
     }
 
@@ -166,7 +156,7 @@ public class WLANwithShadowsocks extends TileService {
 
                 tile.setIcon(Icon.createWithResource(getApplicationContext(),
                         R.drawable.ic_waiting));
-                tile.setLabel("waiting...");
+                tile.setLabel(getString(R.string.wait));
                 tile.setState(Tile.STATE_UNAVAILABLE);
                 tile.updateTile();
             }
@@ -181,6 +171,7 @@ public class WLANwithShadowsocks extends TileService {
         }.start();
 
 
+        WifiReceiver.ReceiveStatus = isActive;
         return isActive;
     }
 
