@@ -24,7 +24,7 @@
 
         <service
             android:name=".WLANwithShadowsocks"
-            android:icon="@drawable/ic_vpn_lock_24px"
+            android:icon="@drawable/ok"
             android:label="@string/tile_label"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE"
             android:sharedUserId="android.uid.system">
@@ -64,6 +64,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+
+
+        <!--<service android:name=".intentService"-->
+                 <!--android:exported="false" />-->
     </application>
 
 </manifest>

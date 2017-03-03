@@ -103,40 +103,6 @@ public class WLANwithShadowsocks extends TileService {
         Log.d("TileFinalStatus", String.valueOf(TileFinalStatus));
     }
 
-    public void turnOff() {
-
-        if (getVPNStatus()) {
-            changSS();
-        }
-
-    }
-
-    public void turnOn() {
-
-        if (!getVPNStatus()) {
-            changSS();
-        }
-
-
-    }
-
-    public boolean getVPNStatus() {
-
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        Network[] networks = cm.getAllNetworks();
-
-        for (int i = 0; i < networks.length; i++) {
-
-            NetworkCapabilities caps = cm.getNetworkCapabilities(networks[i]);
-
-
-            if (caps.hasTransport(NetworkCapabilities.TRANSPORT_VPN) == true) {
-                return true;
-            }
-        }
-        return false;
-
-    }
 
 
     public boolean getServiceStatus(String PREFERENCES_KEY) {
@@ -219,18 +185,9 @@ public class WLANwithShadowsocks extends TileService {
     }
 
 
-    public void changSS() {
 
-        Intent i = new Intent();
 
-        ComponentName comp = new ComponentName("com.github.shadowsocks", "com.github.shadowsocks.QuickToggleShortcut");
 
-        i.setComponent(comp);
-
-        i.setAction("android.intent.action.VIEW");
-
-        startActivity(i);
-    }
 
 
 
