@@ -20,7 +20,7 @@ public class WifiReceiver extends BroadcastReceiver {
 
 
     static NetworkInfo.State wifiState = NetworkInfo.State.UNKNOWN;
-    public static boolean ReceiveStatus = true;
+    public static boolean ReceiveStatus = false;
 
 
     @Override

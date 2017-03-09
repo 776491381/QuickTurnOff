@@ -34,7 +34,6 @@ public class WLANwithShadowsocks extends TileService {
     @Override
     public void onStartListening() {
         super.onStartListening();
-//        Log.d("Tile", "Start <------");
     }
 
     @Override
@@ -91,6 +90,7 @@ public class WLANwithShadowsocks extends TileService {
             return;
         }
         TileFinalStatus = updateTile();
+        WifiReceiver.ReceiveStatus = isActive;
         Log.d("TileFinalStatus", String.valueOf(TileFinalStatus));
     }
 

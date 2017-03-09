@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
         ActivityOptionsCompat options =
                 ActivityOptionsCompat.makeSceneTransitionAnimation(MainActivity.this,
                         v,
-                        transitionName   
+                        transitionName
                 );
 
         ActivityOptionsCompat options2 =
