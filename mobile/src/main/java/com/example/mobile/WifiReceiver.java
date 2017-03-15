@@ -11,7 +11,13 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.CountDownTimer;
 import android.os.Parcelable;
+import android.util.Log;
 import android.widget.Toast;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 /**
  * Created by FYY on 28/02/2017.
@@ -20,8 +26,7 @@ public class WifiReceiver extends BroadcastReceiver {
 
 
     static NetworkInfo.State wifiState = NetworkInfo.State.UNKNOWN;
-    public static boolean ReceiveStatus = false;
-
+    private String filepath = "/mnt/sdcard/data/wifiState.txt";
 
     @Override
     public void onReceive(final Context context, final Intent intent) {
@@ -35,7 +40,7 @@ public class WifiReceiver extends BroadcastReceiver {
 
                 @Override
                 public void onFinish() {
-                    if (WifiManager.NETWORK_STATE_CHANGED_ACTION.equals(intent.getAction()) && ReceiveStatus) {
+                    if (WifiManager.NETWORK_STATE_CHANGED_ACTION.equals(intent.getAction()) && read().equals("true")) {
                         Parcelable parcelableExtra = intent
                                 .getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
                         if (null != parcelableExtra) {
@@ -64,6 +69,24 @@ public class WifiReceiver extends BroadcastReceiver {
         }
 
 
+    private String read(){
+        File file = new File(filepath);
+        if(!file.exists()){
+            return "false";
+        }
+        Long filelength = file.length();
+        byte[] filecontent = new byte[filelength.intValue()];
+        try {
+            FileInputStream in = new FileInputStream(file);
+            in.read(filecontent);
+            in.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return new String(filecontent);
+    }
 
 
     public boolean getVPNStatus(Context context) {

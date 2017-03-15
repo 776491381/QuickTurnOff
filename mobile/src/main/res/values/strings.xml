@@ -9,17 +9,21 @@
     <string name="cancel">cancel</string>
     <string name="fire">yes</string>
     <string name="wait">waitting...</string>
-
+    <string name="alert1">Have no Shadowsocks</string>
+    <string name="alert2">press yes to install</string>
+    <string name="VPNES">"VPN has estabilshed"</string>
+    <string name="VPNUES">"VPN has unestablished"</string>
     <string name="about">About</string>
     <string name="version">Version :  1.0</string>
     <string name="author">Author :  FYY</string>
     <string name="useway">How to use it</string>
     <string name="title_activity_howtouse">howtouse</string>
+    <string name="grant">Granted</string>
   <string name="use">
-        "\n\<n></n>1. Open QuickSetting to add a new Tile\n"
-        "\<n></n>2. Click the added QuickSettingTile named WiFiTrack to switch it on\n"
-        "\<n></n>3. Then shadowsocks will switch status with WiFi status\n"
-        "\<n></n>4. Another tile named ALL Tile is to switch both WiFi and Shadowsocks ignored WiFiTrack\n"
+        "\n\n\t1. Open QuickSetting to add a new Tile\n"
+        "\n\n\t2. Click the added QuickSettingTile named WiFiTrack to switch it on\n"
+        "\n\n\t3. Then shadowsocks will switch status with WiFi status\n"
+        "\n\n\t4. Another tile named ALL Tile is to switch both WiFi and Shadowsocks ignored WiFiTrack\n"
     </string>
 
 

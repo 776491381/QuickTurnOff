@@ -18,11 +18,13 @@
     <string name="version">版本 :  1.0</string>
     <string name="author">作者 :  FYY</string>
     <string name="useway">使用方法</string>
+    <string name="title_activity_howtouse">使用方法</string>
+    <string name="grant">授权成功</string>
     <string name="use">
-        "\n\<n></n>1. 打开下滑通知添加Tile\n"
-        "\<n></n>2. 单机图标WiFi监听使其为打开状态\n"
-        "\<n></n>3. 之后影梭开关状态会随着WiFi开关状态转换\n"
-        "\<n></n>4. 另一个全部开关Tile为强制打开或关闭WiFi和影梭，忽略WiFi监听\n"
+        "\n\n\t1. 打开下滑通知添加Tile\n"
+        "\n\n\t2. 单机图标WiFi监听使其为打开状态\n"
+        "\n\n\t3. 之后影梭开关状态会随着WiFi开关状态转换\n"
+        "\n\n\t4. 另一个全部开关Tile为强制打开或关闭WiFi和影梭，忽略WiFi监听\n"
     </string>
 
 </resources>

@@ -13,7 +13,15 @@ import android.os.CountDownTimer;
 import android.service.quicksettings.Tile;
 import android.service.quicksettings.TileService;
 import android.util.Log;
+import android.widget.Spinner;
+import android.widget.TextView;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.Locale;
 
@@ -26,6 +34,9 @@ public class WLANwithShadowsocks extends TileService {
     public static boolean isActive;
     private static final String SERVICE_STATUS_FLAG = "serviceStatus";
     public static boolean TileFinalStatus = true ;
+    private String filepath = "/mnt/sdcard/data/wifiState.txt";
+    FileWriter fw = null;
+
 
     public WLANwithShadowsocks() {
     }
@@ -90,11 +101,33 @@ public class WLANwithShadowsocks extends TileService {
             return;
         }
         TileFinalStatus = updateTile();
-        WifiReceiver.ReceiveStatus = isActive;
+        saveFile(String.valueOf(isActive));
         Log.d("TileFinalStatus", String.valueOf(TileFinalStatus));
     }
 
 
+
+    private void saveFile(String state){
+        try {
+            File f=new File(filepath);
+            fw = new FileWriter(f,false);
+            PrintWriter pw = new PrintWriter(fw);
+            pw.print(state);
+            pw.flush();
+            try {
+                fw.flush();
+                pw.close();
+                fw.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+
+    }
 
     public boolean getServiceStatus(String PREFERENCES_KEY) {
 
@@ -171,7 +204,6 @@ public class WLANwithShadowsocks extends TileService {
         }.start();
 
 
-        WifiReceiver.ReceiveStatus = isActive;
         return isActive;
     }
 
